@@ -1,21 +1,29 @@
-import io.restassured.http.ContentType;
+package tests;
+
+import models.LoginBodyModel;
+import models.LoginResponseModel;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LoginTest {
+public class LoginExtendedTest {
 
 
     @Test
     void succesfulLoginTest(){
-        String authData = "{\n" +
+       /* String authData = "{\n" +
                 "    \"email\": \"eve.holt@reqres.in\",\n" +
                 "    \"password\": \"cityslicka\"\n" +
-                "}";
+                "}";*/
 
-        given()
+        LoginBodyModel authData = new LoginBodyModel();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
+
+        LoginResponseModel response = given()
                     .body(authData)
                     .contentType(JSON)
                     .log().uri()
@@ -25,7 +33,9 @@ public class LoginTest {
                     .log().status()
                     .log().body()
                     .statusCode(200)
-                    .body("token",is("QpwL5tke4Pnpja7X4"));
+                .extract().as(LoginResponseModel.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4",response.getToken());
 
     }
 
