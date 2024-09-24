@@ -41,4 +41,76 @@ public class LoginTest {
 
 
     }
+    @Test
+    void unsuccessfulLogin400Test() {
+        String authData = "";
+
+        given()
+                .body(authData)
+                .log().uri()
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(400)
+                .body("error", is("Missing email or username"));
+    }
+    @Test
+    void userNotFoundTest() {
+        String authData = "{\"email\": \"eveasdas.holt@reqres.in\", \"password\": \"cda\"}";
+
+        given()
+                .body(authData)
+                .contentType(JSON)
+                .log().uri()
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(400)
+                .body("error", is("user not found"));
+    }
+    @Test
+    void missingPasswordTest() {
+        String authData = "{\"email\": \"eveasdas.holt@reqres.in\"}";
+
+        given()
+                .body(authData)
+                .contentType(JSON)
+                .log().uri()
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(400)
+                .body("error", is("Missing password"));
+    }
+    @Test
+    void missingLoginTest() {
+        String authData = "{\"password\": \"cda\"}";
+
+        given()
+                .body(authData)
+                .contentType(JSON)
+                .log().uri()
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(400)
+                .body("error", is("Missing email or username"));
+    }
+
 }
