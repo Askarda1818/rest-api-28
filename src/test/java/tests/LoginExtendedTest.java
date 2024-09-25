@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import models.lombok.LoginBodyLombokModel;
 import models.lombok.LoginResponseLombokModel;
 import models.pojo.LoginBodyModel;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import static models.helpers.CustomAllureListener.withCustomTemplates;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,11 +18,6 @@ public class LoginExtendedTest {
 
     @Test
     void succesfulLoginPojoTest(){
-       /* String authData = "{\n" +
-                "    \"email\": \"eve.holt@reqres.in\",\n" +
-                "    \"password\": \"cityslicka\"\n" +
-                "}";*/
-
         LoginBodyModel authData = new LoginBodyModel();
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslicka");
@@ -29,6 +26,8 @@ public class LoginExtendedTest {
                     .body(authData)
                     .contentType(JSON)
                     .log().uri()
+                   /* .log().body()
+                    .log().headers()*/
                 .when()
                     .post("https://reqres.in/api/login")
                 .then()
@@ -57,6 +56,97 @@ public class LoginExtendedTest {
                 .then()
                 .log().status()
                 .log().body()
+                .log().headers()
+                .statusCode(200)
+                .extract().as(LoginResponseLombokModel.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4",response.getToken());
+
+    }
+
+    @Test
+    void succesfulLoginAllureTest(){
+
+        LoginBodyLombokModel authData = new LoginBodyLombokModel();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
+
+        LoginResponseLombokModel response = given()
+                .filter(new AllureRestAssured())
+                .log().uri()
+                .log().body()
+                .log().headers()
+                .body(authData)
+                .contentType(JSON)
+
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .log().headers()
+                .statusCode(200)
+                .extract().as(LoginResponseLombokModel.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4",response.getToken());
+
+    }
+
+    @Test
+    void succesfulLoginCustomAllureTest(){
+
+        LoginBodyLombokModel authData = new LoginBodyLombokModel();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
+
+        LoginResponseLombokModel response = given()
+                .filter(withCustomTemplates())
+                .log().uri()
+                .log().body()
+                .log().headers()
+                .body(authData)
+                .contentType(JSON)
+
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .log().headers()
+                .statusCode(200)
+                .extract().as(LoginResponseLombokModel.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4",response.getToken());
+
+    }
+
+    @Test
+    void succesfulLoginWithStepsTest(){
+
+        LoginBodyLombokModel authData = new LoginBodyLombokModel();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
+
+        LoginResponseLombokModel response = given()
+                .filter(withCustomTemplates())
+                .log().uri()
+                .log().body()
+                .log().headers()
+                .body(authData)
+                .contentType(JSON)
+
+
+                .when()
+                .post("https://reqres.in/api/login")
+
+                .then()
+                .log().status()
+                .log().body()
+                .log().headers()
                 .statusCode(200)
                 .extract().as(LoginResponseLombokModel.class);
 
